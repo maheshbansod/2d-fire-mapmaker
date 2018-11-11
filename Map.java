@@ -1,6 +1,8 @@
 
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,17 +11,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Map {
+import javax.imageio.ImageIO;
+
+public class Map extends Asset {
 	
 	int[][] layout;
-	List<Integer> assets; //change data type to store image
+	BufferedImage entryimg;
+	int entryx;
+	int entryy;
+	List<Asset> assets; //change data type to store image
 	
 	Map() {
+		super("map");
 		assets = new ArrayList<>();
 	}
 	
 	Map(int [][]layout) {
+		super("map");
 		this.layout = layout;
+		assets = new ArrayList<>();
+	}
+	
+	void setEntryImage(String fname) {
+		try {
+			entryimg = ImageIO.read(new File(fname));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	void writeTo(String filename) {
