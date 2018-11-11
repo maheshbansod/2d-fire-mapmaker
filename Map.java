@@ -19,7 +19,7 @@ public class Map extends Asset {
 	BufferedImage entryimg;
 	int entryx;
 	int entryy;
-	List<Asset> assets; //change data type to store image
+	List<Asset> assets;
 	
 	Map() {
 		super("map");
@@ -30,6 +30,15 @@ public class Map extends Asset {
 		super("map");
 		this.layout = layout;
 		assets = new ArrayList<>();
+	}
+	
+	void addAsset(Asset asset) {
+		assets.add(asset);
+	}
+	
+	void setEntryCoords(int x, int y) {
+		entryx = x;
+		entryy = y;
 	}
 	
 	void setEntryImage(String fname) {
