@@ -110,8 +110,9 @@ public class Map extends Asset {
 		
 	}
 	
+	/*TODO: create function to get assets from a different map file*/
+	
 	public static void main(String[] args) {
-		//TODO create new map here
 		
 		Scanner sc = new Scanner(System.in);
 			System.out.println("Enter 4x4 matrix: ");
