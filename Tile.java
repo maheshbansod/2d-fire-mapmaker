@@ -7,16 +7,28 @@ import javax.imageio.ImageIO;
 public class Tile extends Asset {
 	BufferedImage image;
 	double density;
+	
+	static final double DENSE = 5.0;
+	static final double SPARSE = 0.0;
+	static final double MEDIUM_DENSITY = (DENSE+SPARSE)/2;
+	
+	final int TILE_WIDTH = 30;
+	final int TILE_HEIGHT = 30;
 
-	Tile(String fname, double density) {
+	Tile(String fname, double density) throws IOException {
 		super("tile");
 		this.density = density;
-		try {
-			image = ImageIO.read(new File(fname));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		setImageFile(new File(fname));
+	}
+	
+	Tile(File file, double density) throws IOException {
+		super("tile");
+		this.density = density;
+		setImageFile(file);
+	}
+	
+	void setImageFile(File file) throws IOException {
+		image = ImageIO.read(file);
 	}
 
 }
