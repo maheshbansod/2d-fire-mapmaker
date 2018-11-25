@@ -1,5 +1,7 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,8 +13,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MapMaker implements ActionListener {
@@ -26,10 +31,14 @@ public class MapMaker implements ActionListener {
 	
 	JPanel tilepanel;
 	
+	int selectedtile = -1;
+	int selectedtool = -1;
+	
 	Map map = new Map();
 	
 	final String TILE_FILE = "tiles.dat";
 	final int TILE_WIDTH = 30;
+	final Border selectedtool_border = BorderFactory.createMatteBorder(1, 5, 1, 1, Color.red);
 
 	MapMaker() {
 		frame = new JFrame("Map Maker for 2D fire");
@@ -47,6 +56,7 @@ public class MapMaker implements ActionListener {
 		
 		frame.add(mainpanel, BorderLayout.NORTH);
 		frame.add(tilepanel, BorderLayout.WEST);
+		frame.add(map, BorderLayout.CENTER);
 		
 		mainpanel.add(newbutton);
 		mainpanel.add(savebutton);
@@ -61,18 +71,19 @@ public class MapMaker implements ActionListener {
 		frame.setVisible(true);
 	}
 	
-	void showTiles() {
-		for(Asset asset: map.assets) {
-			if(asset.getClass() == Tile.class) {
-				Tile t = (Tile)asset;
+	public void showTiles() {
+		tilepanel.removeAll();
+		for(int i=0;i<map.assets.size();i++) {
+				Tile t = (Tile)map.assets.get(i);
 				Image scaledimg = t.image.getScaledInstance(TILE_WIDTH,
 						TILE_WIDTH, Image.SCALE_SMOOTH);
 				JButton btn = new JButton(new ImageIcon(scaledimg));
-				btn.setBorder(BorderFactory.createEmptyBorder());
+				if(i != selectedtile) btn.setBorder(BorderFactory.createEmptyBorder());
+				else btn.setBorder(selectedtool_border);
 				btn.setContentAreaFilled(false);
-				btn.putClientProperty("id",t.id);
+				btn.putClientProperty("id",i);
+				btn.addActionListener(new ToolSelectHandler(this));
 				tilepanel.add(btn);
-			}
 		}
 		tilepanel.validate();
 		
@@ -93,11 +104,61 @@ public class MapMaker implements ActionListener {
 					JOptionPane.showMessageDialog(frame, "Couldn't open file "+chooser.getSelectedFile().getName(),"I/O Error",JOptionPane.ERROR_MESSAGE);
 				}
 			}
+		} else if(evt.getSource() == newbutton) {
+			JFrame newframe = new JFrame("New map");
+			JLabel namelabel = new JLabel("Map name");
+			JLabel widthlabel = new JLabel("Width");
+			JLabel heightlabel = new JLabel("Height");
+			JTextField nametf = new JTextField(10);
+			JTextField widthtf = new JTextField(3);
+			JTextField heighttf = new JTextField(3);
+			JButton createbtn = new JButton("Create");
+			
+			newframe.setLayout(new GridLayout(4,2));
+			newframe.add(namelabel);
+			newframe.add(nametf);
+			newframe.add(widthlabel);
+			newframe.add(widthtf);
+			newframe.add(heightlabel);
+			newframe.add(heighttf);
+			newframe.add(new JPanel());
+			newframe.add(createbtn);
+			
+			createbtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					map = new Map();
+					map.setSize(Integer.parseInt(widthtf.getText()),
+							Integer.parseInt(heighttf.getText()));
+					map.setName(namelabel.getText());
+					//redisplay map
+				}
+			});
+			
+			newframe.setVisible(true);
 		}
 	}
 	
 	public static void main(String[] args) {
 		new MapMaker();
 	}
+
+}
+
+class ToolSelectHandler implements ActionListener {
+
+	MapMaker m;
+	
+	ToolSelectHandler(MapMaker m) {
+		this.m = m;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JButton btn = (JButton)e.getSource();
+		int id = (int)btn.getClientProperty("id");
+		m.selectedtile=id;
+		m.showTiles();
+	}
+	
 
 }

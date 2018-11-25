@@ -12,8 +12,8 @@ public class Tile extends Asset {
 	static final double SPARSE = 0.0;
 	static final double MEDIUM_DENSITY = (DENSE+SPARSE)/2;
 	
-	final int TILE_WIDTH = 30;
-	final int TILE_HEIGHT = 30;
+	static final int TILE_WIDTH = 30;
+	static final int TILE_HEIGHT = 30;
 
 	Tile(String fname, double density) throws IOException {
 		super("tile");
